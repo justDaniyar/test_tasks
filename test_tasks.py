@@ -51,12 +51,9 @@ data = {"id": [1,
 
 df = pd.DataFrame(data)
 
-workbook = Workbook()
-
 client = MongoClient()
 client = MongoClient("mongodb://localhost:27017/")
 database = client["test_task"]
-
 
 def task_1():
     """
@@ -75,6 +72,8 @@ def task_1():
                                                "%H:%M:%S").time()
 
     data = [df_copy.columns] + list(df_copy.values)
+
+    workbook = Workbook()
     worksheet = workbook.new_sheet(sheet_name="task_1",
                                    data=data)
     worksheet.set_col_style(6, 
@@ -99,14 +98,15 @@ def task_2():
     is_age_more_or_equal_than_35 = df_copy["age"] >= 35
     df_copy.loc[(is_not_manager_or_developer
                  & is_age_more_or_equal_than_35), 
-                "TimeToEnter"] = dt.strptime("11:00:00",
-                                             "%H:%M:%S").time()
+                "time_to_enter"] = dt.strptime("11:00:00",
+                                               "%H:%M:%S").time()
     df_copy.loc[~(is_not_manager_or_developer
                   & is_age_more_or_equal_than_35), 
-                "TimeToEnter"] = dt.strptime("09:30:00",
-                                             "%H:%M:%S").time()
+                "time_to_enter"] = dt.strptime("09:30:00",
+                                               "%H:%M:%S").time()
 
     data = [df_copy.columns] + list(df_copy.values)
+    workbook = Workbook()
     worksheet = workbook.new_sheet(sheet_name="task_2",
                                    data=data)
     worksheet.set_col_style(6,
@@ -119,7 +119,37 @@ def task_2():
     records = json.loads(df_copy.T.to_json(date_format="iso")).values()
     collection.insert_many(records)
 
+
+def task_3():
+    """
+    Performs the third task
+    """
+    df_copy = df.copy()
+
+    is_architect = df_copy["job"].str.contains("Architect")
+    df_copy.loc[is_architect, 
+                "time_to_enter"] = dt.strptime("10:30:00",
+                                               "%H:%M:%S").time()
+    df_copy.loc[~is_architect,
+                "time_to_enter"] = dt.strptime("09:10:00",
+                                               "%H:%M:%S").time()
+
+    data = [df_copy.columns] + list(df_copy.values)
+    workbook = Workbook()
+    worksheet = workbook.new_sheet(sheet_name="task_3",
+                                   data=data)
+    worksheet.set_col_style(6,
+                            Style(format=Format("yyyy-mm-dd hh:mm:ss")))
+    worksheet.set_col_style(7,
+                            Style(format=Format("hh:mm:ss")))
+    workbook.save("task_3.xlsx")
+
+    collection = database["ArchitectEnterTime"]
+    records = json.loads(df_copy.T.to_json(date_format="iso")).values()
+    collection.insert_many(records)
+
 task_1()
 task_2()
+task_3()
     
 
