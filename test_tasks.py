@@ -52,7 +52,7 @@ data = {"id": [1,
 df = pd.DataFrame(data)
 
 client = MongoClient()
-client = MongoClient("mongodb://localhost:27017/")
+client = MongoClient("mongodb://root:example@localhost:27017/?authMechanism=DEFAULT")
 database = client["test_task"]
 
 def task_1():
@@ -80,7 +80,7 @@ def task_1():
                             Style(format=Format("yyyy-mm-dd hh:mm:ss")))
     worksheet.set_col_style(7, 
                             Style(format=Format("hh:mm:ss")))
-    workbook.save("task_1.xlsx")
+    workbook.save("excel_files/task_1.xlsx")
 
     collection = database["18MoreAnd21andLess"]
     records = json.loads(df_copy.T.to_json(date_format="iso")).values()
@@ -113,7 +113,7 @@ def task_2():
                             Style(format=Format("yyyy-mm-dd hh:mm:ss")))
     worksheet.set_col_style(7,
                             Style(format=Format("hh:mm:ss")))
-    workbook.save("task_2.xlsx")
+    workbook.save("excel_files/task_2.xlsx")
 
     collection = database["35AndMore"]
     records = json.loads(df_copy.T.to_json(date_format="iso")).values()
@@ -142,7 +142,7 @@ def task_3():
                             Style(format=Format("yyyy-mm-dd hh:mm:ss")))
     worksheet.set_col_style(7,
                             Style(format=Format("hh:mm:ss")))
-    workbook.save("task_3.xlsx")
+    workbook.save("excel_files/task_3.xlsx")
 
     collection = database["ArchitectEnterTime"]
     records = json.loads(df_copy.T.to_json(date_format="iso")).values()
