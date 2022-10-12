@@ -3,6 +3,12 @@ from datetime import datetime as dt
 from pymongo import MongoClient
 from pyexcelerate import Workbook, Style, Format, Color
 import json
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+username = os.getenv("MONGO_INITDB_ROOT_USERNAME")
+password = os.getenv("MONGO_INITDB_ROOT_PASSWORD")
 
 data = {"id": [1, 
                2, 
@@ -51,8 +57,9 @@ data = {"id": [1,
 
 df = pd.DataFrame(data)
 
-client = MongoClient()
-client = MongoClient("mongodb://root:example@localhost:27017/?authMechanism=DEFAULT")
+# Uncomment for docker use
+# client = MongoClient(f"mongodb://{username}:{password}@mongo:27017/?authMechanism=DEFAULT")
+client = MongoClient(f"mongodb://{username}:{password}@localhost:27017/?authMechanism=DEFAULT")
 database = client["test_task"]
 
 def task_1():
@@ -151,5 +158,10 @@ def task_3():
 task_1()
 task_2()
 task_3()
+
+print("Successfull!")
+
+print(client.list_database_names())
+print(database.list_collection_names())
     
 
