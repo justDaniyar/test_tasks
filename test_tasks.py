@@ -87,6 +87,39 @@ def task_1():
     records = json.loads(df_copy.T.to_json(date_format="iso")).values()
     collection.insert_many(records)
 
+
+def task_2():
+    """
+    Performs the second task
+    """
+    df_copy = df.copy()
+
+    is_not_manager_or_developer = ~df_copy["job"].str.contains(pat="Developer|Manager",
+                                                               regex=True)
+    is_age_more_or_equal_than_35 = df_copy["age"] >= 35
+    df_copy.loc[(is_not_manager_or_developer
+                 & is_age_more_or_equal_than_35), 
+                "TimeToEnter"] = dt.strptime("11:00:00",
+                                             "%H:%M:%S").time()
+    df_copy.loc[~(is_not_manager_or_developer
+                  & is_age_more_or_equal_than_35), 
+                "TimeToEnter"] = dt.strptime("09:30:00",
+                                             "%H:%M:%S").time()
+
+    data = [df_copy.columns] + list(df_copy.values)
+    worksheet = workbook.new_sheet(sheet_name="task_2",
+                                   data=data)
+    worksheet.set_col_style(6,
+                            Style(format=Format("yyyy-mm-dd hh:mm:ss")))
+    worksheet.set_col_style(7,
+                            Style(format=Format("hh:mm:ss")))
+    workbook.save("task_2.xlsx")
+
+    collection = database["35AndMore"]
+    records = json.loads(df_copy.T.to_json(date_format="iso")).values()
+    collection.insert_many(records)
+
 task_1()
+task_2()
     
 
